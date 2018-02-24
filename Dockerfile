@@ -22,6 +22,7 @@ RUN wget -O $HOME/origin-client.tar.gz $ORIGIN_CLIENT && \
     rm -rf origin-client*
 
 RUN mkdir /home/bamboo && \
+    chmod -R 777 /home/bamboo && \
     wget -O /home/bamboo/bamboo-agent.jar https://build-dev.csx.com/agentServer/agentInstaller/atlassian-bamboo-agent-installer-6.1.4.jar
 
 CMD ["java", "-Dbamboo.home=/home/bamboo", "-Dbamboo.agent.ignoreServerCertName=true", "-jar", "/home/bamboo/bamboo-agent.jar", "https://build-dev.csx.com/agentServer/"]
