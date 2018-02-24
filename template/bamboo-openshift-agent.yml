@@ -33,33 +33,11 @@ objects:
       type: Git
     strategy:
       dockerStrategy:
-        from:
-          kind: ImageStreamTag
-          name: bamboo-openshift-agent:latest
       type: Docker
     triggers:
     - type: ConfigChange
     - imageChange: {}
       type: ImageChange
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    creationTimestamp: null
-    generation: 2
-    labels:
-      build: ${BAMBOO_AGENT_NAME}
-    name: bamboo-openshift-agent
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    creationTimestamp: null
-    generation: 1
-    name: ${BAMBOO_AGENT_NAME}
-    labels:
-      role: bamboo-agent
-    annotations:
-      slave-label: ${BAMBOO_AGENT_NAME}
-  spec:
 parameters:
 - description: The name for the Bamboo agent.
   name: BAMBOO_AGENT_NAME
@@ -67,7 +45,7 @@ parameters:
   required: true
 - description: Git source URI for application
   name: SOURCE_REPOSITORY_URL
-  value: https://C8235@git.csx.com/scm/~c8235/bamboo-openshift-agent.git
+  value: https://github.com/csx-technology/bamboo-openshift-agent.git
   required: true
 - description: Git branch/tag reference
   name: SOURCE_REPOSITORY_REF
@@ -75,5 +53,5 @@ parameters:
   required: true
 - description: Path within Git project to build; empty for root project directory.
   name: CONTEXT_DIR
-  value: 
+  value: .
   required: true
