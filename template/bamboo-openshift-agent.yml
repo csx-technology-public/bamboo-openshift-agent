@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: bamboo-openshift-agent
+metadata:
+  annotations:
+    description: Bamboo agent for openshift cli
+    tags: bamboo,openshift
+    version: 1.0.0
+  name: bamboo-openshift-agent
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      build: ${BAMBOO_AGENT_NAME}
+    name: ${BAMBOO_AGENT_NAME}
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${BAMBOO_AGENT_NAME}:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: ${CONTEXT_DIR}
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: bamboo-openshift-agent:latest
+      type: Docker
+    triggers:
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 2
+    labels:
+      build: ${BAMBOO_AGENT_NAME}
+    name: bamboo-openshift-agent
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: ${BAMBOO_AGENT_NAME}
+    labels:
+      role: bamboo-agent
+    annotations:
+      slave-label: ${BAMBOO_AGENT_NAME}
+  spec:
+parameters:
+- description: The name for the Bamboo agent.
+  name: BAMBOO_AGENT_NAME
+  value: bamboo-openshift-agent
+  required: true
+- description: Git source URI for application
+  name: SOURCE_REPOSITORY_URL
+  value: https://C8235@git.csx.com/scm/~c8235/bamboo-openshift-agent.git
+  required: true
+- description: Git branch/tag reference
+  name: SOURCE_REPOSITORY_REF
+  value: master
+  required: true
+- description: Path within Git project to build; empty for root project directory.
+  name: CONTEXT_DIR
+  value: 
+  required: true
